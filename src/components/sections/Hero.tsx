@@ -31,7 +31,7 @@ export function Hero() {
 
           <div className="flex w-full flex-col gap-3 pt-2 sm:w-auto sm:flex-row sm:gap-4">
             <ButtonLink href="/#contact">
-              Book a Consultation
+              Get a Quote
               <ArrowRight className="size-4" aria-hidden="true" />
             </ButtonLink>
             <ButtonLink href="/#services" variant="outline">

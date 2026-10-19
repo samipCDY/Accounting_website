@@ -54,7 +54,7 @@ export function Navbar() {
 
         <div className="hidden lg:block">
           <ButtonLink href="/#contact" size="md">
-            Book a Consultation
+            Get a Quote
           </ButtonLink>
         </div>
 
@@ -94,7 +94,7 @@ export function Navbar() {
               ))}
               <li className="pt-2">
                 <ButtonLink href="/#contact" className="w-full" onClick={() => setOpen(false)}>
-                  Book a Consultation
+                  Get a Quote
                 </ButtonLink>
               </li>
             </ul>
