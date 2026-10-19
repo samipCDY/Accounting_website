@@ -21,13 +21,8 @@ export function Logo({ inverted = false }: { inverted?: boolean }) {
       aria-label={`${siteConfig.name} — home`}
     >
       <LogoMark className={`h-9 w-auto sm:h-10 ${inverted ? "text-white" : "text-ink"}`} />
-      <span className="flex flex-col leading-tight">
-        <span className={`text-xl font-semibold tracking-tight sm:text-2xl ${inverted ? "text-white" : "text-ink"}`}>
-          {siteConfig.name}
-        </span>
-        <span className={`text-xs sm:text-sm ${inverted ? "text-white/70" : "text-muted"}`}>
-          {siteConfig.tagline}
-        </span>
+      <span className={`text-xl font-semibold tracking-tight sm:text-2xl ${inverted ? "text-white" : "text-ink"}`}>
+        {siteConfig.name}
       </span>
     </Link>
   );
