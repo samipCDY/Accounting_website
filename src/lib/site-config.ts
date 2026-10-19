@@ -119,17 +119,23 @@ export const services: Service[] = [
   },
 ];
 
-export type Industry = { name: string; icon: LucideIcon };
+export type Industry = {
+  name: string;
+  icon: LucideIcon;
+  tone: Tone;
+  /** Optional photo for the homepage wheel, e.g. "/wheel/manufacturing.jpg" in /public. */
+  image?: string;
+};
 
 export const industries: Industry[] = [
-  { name: "Manufacturing", icon: Factory },
-  { name: "Trading & Retail", icon: Store },
-  { name: "Hospitality & Tourism", icon: Hotel },
-  { name: "IT & Software", icon: Cpu },
-  { name: "Healthcare", icon: HeartPulse },
-  { name: "Education", icon: GraduationCap },
-  { name: "NGOs & INGOs", icon: Users },
-  { name: "Cooperatives & Finance", icon: Landmark },
+  { name: "Manufacturing", icon: Factory, tone: "blue" },
+  { name: "Trading & Retail", icon: Store, tone: "orange" },
+  { name: "Hospitality & Tourism", icon: Hotel, tone: "brand" },
+  { name: "IT & Software", icon: Cpu, tone: "coral" },
+  { name: "Healthcare", icon: HeartPulse, tone: "blue" },
+  { name: "Education", icon: GraduationCap, tone: "orange" },
+  { name: "NGOs & INGOs", icon: Users, tone: "brand" },
+  { name: "Cooperatives & Finance", icon: Landmark, tone: "coral" },
 ];
 
 // Describes how the firm works — edit to match your actual practice.

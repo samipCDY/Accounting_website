@@ -95,7 +95,7 @@ src/
   app/actions/quote.ts Server Action for the quote form
   components/
     layout/            Navbar, Footer
-    sections/          Hero, Services, AboutPreview, Industries, QuoteBanner, QuoteSection, QuoteForm
+    sections/          Hero, Services, AboutPreview, Industries, ImageWheel, QuoteBanner, QuoteSection, QuoteForm
     ui/                Button, Pill, SectionHeading, PageHeader, Logo, Reveal (scroll animation)
   lib/site-config.ts   Firm details, navigation, services and industries content
   lib/metadata.ts      Per-page SEO metadata helper
@@ -107,5 +107,8 @@ src/
 
 Firm details in `src/lib/site-config.ts` marked with `[brackets]` are still placeholders —
 ICAN registration, PAN, address, phone, email and office hours.
+**Homepage industries wheel:** tiles show a colour + icon by default. To use photos, put them in
+`public/wheel/` and add `image: "/wheel/your-photo.jpg"` to that industry in `site-config.ts`.
+
 Set `NEXT_PUBLIC_SITE_URL` in Netlify to the production domain so canonical URLs,
 the sitemap and Open Graph tags are correct.
