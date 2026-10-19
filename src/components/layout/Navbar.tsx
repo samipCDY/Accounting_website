@@ -39,17 +39,17 @@ export function Navbar() {
     >
       <nav
         aria-label="Primary"
-        className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:h-24 lg:px-8"
+        className="flex h-20 items-center justify-between gap-6 px-4 sm:px-5 lg:h-24 lg:px-6"
       >
         <Logo />
 
-        <ul className="hidden items-center gap-9 lg:flex">
+        <ul className="hidden items-center gap-10 lg:flex">
           {navItems.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
                 aria-current={isActive(item.href) ? "page" : undefined}
-                className="rounded text-base font-medium text-ink-soft transition-colors hover:text-brand-600 aria-[current=page]:text-brand-600"
+                className="rounded text-lg font-medium text-ink-soft transition-colors hover:text-brand-600 aria-[current=page]:text-brand-600"
               >
                 {item.label}
               </Link>
