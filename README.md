@@ -106,7 +106,7 @@ src/
 ## Before launch
 
 Firm details in `src/lib/site-config.ts` marked with `[brackets]` are still placeholders —
-ICAN registration, PAN, address, phone, email and office hours.
+ICAN registration, PAN, address, phone and office hours.
 **Homepage industries wheel:** tiles show a colour + icon by default. To use photos, put them in
 `public/wheel/` and add `image: "/wheel/your-photo.jpg"` to that industry in `site-config.ts`.
 

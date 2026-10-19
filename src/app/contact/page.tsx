@@ -37,7 +37,7 @@ export default function ContactPage() {
                   <Icon className="size-6" aria-hidden="true" />
                 </span>
                 <h2 className="mt-6 text-lg font-semibold text-ink">{label}</h2>
-                <p className="mt-2 text-sm leading-relaxed break-words text-ink-soft">
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft [overflow-wrap:anywhere]">
                   {lines.map((line) => (
                     <span key={line} className="block">
                       {line}

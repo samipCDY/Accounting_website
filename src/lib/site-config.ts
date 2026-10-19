@@ -38,8 +38,8 @@ export const siteConfig = {
   contact: {
     phoneDisplay: "+977 [01-XXXXXXX]",
     phoneHref: "tel:+97710000000",
-    email: "[info@yourfirm.com.np]",
-    emailHref: "mailto:info@example.com",
+    email: "csamip53@gmail.com",
+    emailHref: "mailto:csamip53@gmail.com",
     addressLines: ["[Street / Tole]", "[City], Nepal"],
     hours: "[Sun – Fri, 10:00 – 17:00]",
   },

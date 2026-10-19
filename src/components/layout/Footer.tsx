@@ -69,9 +69,9 @@ export function Footer() {
             </a>
           </li>
           <li>
-            <a href={contact.emailHref} className="flex gap-3 break-all text-white/75 hover:text-white">
+            <a href={contact.emailHref} className="flex gap-3 text-white/75 hover:text-white">
               <Mail className="mt-0.5 size-4 shrink-0 text-brand-400" aria-hidden="true" />
-              {contact.email}
+              <span className="min-w-0 [overflow-wrap:anywhere]">{contact.email}</span>
             </a>
           </li>
         </FooterColumn>

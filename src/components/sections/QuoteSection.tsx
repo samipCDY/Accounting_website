@@ -58,9 +58,9 @@ function ContactRow({
       <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/10 text-brand-200">
         <Icon className="size-4" aria-hidden="true" />
       </span>
-      <span>
+      <span className="min-w-0">
         <span className="block text-white/60">{label}</span>
-        <span className="mt-0.5 block font-medium break-words text-white">{value}</span>
+        <span className="mt-0.5 block font-medium text-white [overflow-wrap:anywhere]">{value}</span>
       </span>
     </>
   );
