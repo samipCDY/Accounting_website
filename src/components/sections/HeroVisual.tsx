@@ -58,11 +58,10 @@ function Tile({ color, heightClass, delay, chip, chipDelay }: TileProps) {
   const ChipIcon = chip.icon;
 
   return (
-    <motion.div
-      className="relative w-full"
-      initial={reduceMotion ? false : { opacity: 0, y: 28, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+    // CSS entrance (not Motion) so the tiles still appear if JavaScript never runs.
+    <div
+      className="relative w-full animate-tile-in motion-reduce:animate-none"
+      style={{ animationDelay: `${delay}s` }}
     >
       <div className={`relative overflow-hidden rounded-[1.75rem] ${color} ${heightClass}`}>
         <div className="absolute -top-10 -right-10 size-32 rounded-full bg-white/15" />
@@ -82,6 +81,6 @@ function Tile({ color, heightClass, delay, chip, chipDelay }: TileProps) {
         </span>
         <span className="text-[11px] leading-tight font-medium text-ink sm:text-sm">{chip.label}</span>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

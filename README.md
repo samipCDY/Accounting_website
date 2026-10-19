@@ -54,11 +54,24 @@ npm run build
 
 1. **To the firm** (`QUOTE_TO_EMAIL`), with the full request; replying goes straight to the customer.
 2. **To the customer**, a confirmation. It does not repeat their message, so the form can't be
-   used to send arbitrary text to someone else's inbox.
+   used to send arbitrary text to someone else's inbox. If this email fails, the request still
+   succeeds and the success message says no confirmation was sent.
 
-Spam protection: hidden honeypot field, minimum fill time, per-IP rate limit (5 per 15 min,
-best-effort per server instance), server-side validation and length limits, HTML-escaped emails,
-and idempotency keys so double submits don't send duplicates.
+Spam protection (`src/lib/quote-security.ts`), designed to hold across Netlify serverless instances:
+
+- **Signed form token:** the server signs a token (HMAC) when the form loads. Any instance can
+  verify it statelessly; it can't be forged, expires after 2 hours, and enforces a 3-second
+  minimum fill time.
+- **Shared rate limits** in [Netlify Blobs](https://docs.netlify.com/blobs/overview/) (no database):
+  5 requests per IP per 15 min and 3 per recipient email per hour, using compare-and-swap writes.
+  IPs and emails are stored only as keyed hashes. Outside Netlify (local dev) the limits fall back
+  to in-memory counters.
+- Hidden honeypot field, server-side validation and length limits, HTML-escaped emails.
+- **Idempotency keys** cover every field, so an identical resubmission is de-duplicated while a
+  corrected name, phone or company is sent as a new request.
+
+Without JavaScript the form shows the email and phone number instead (its submit button stays
+disabled because the signed token can't load).
 
 **Resend setup:**
 
@@ -101,6 +114,7 @@ src/
   lib/metadata.ts      Per-page SEO metadata helper
   lib/quote.ts         Quote form fields, limits and validation (shared client/server)
   lib/quote-emails.ts  Email templates (server-only)
+  lib/quote-security.ts Signed form tokens and shared rate limits (server-only)
 ```
 
 ## Before launch

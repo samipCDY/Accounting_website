@@ -11,7 +11,13 @@ export function HashHighlight() {
   useEffect(() => {
     const apply = () => {
       document.querySelectorAll("[data-highlighted]").forEach((el) => el.removeAttribute("data-highlighted"));
-      const id = decodeURIComponent(window.location.hash.slice(1));
+      const raw = window.location.hash.slice(1);
+      let id = raw;
+      try {
+        id = decodeURIComponent(raw);
+      } catch {
+        // Malformed escape (e.g. /industries#%): use the fragment as-is instead of throwing.
+      }
       if (id) document.getElementById(id)?.setAttribute("data-highlighted", "true");
     };
     apply();

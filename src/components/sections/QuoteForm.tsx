@@ -1,25 +1,27 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, type ReactNode } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { CircleCheck, LoaderCircle, Send } from "lucide-react";
-import { submitQuote } from "@/app/actions/quote";
+import { getQuoteFormToken, submitQuote } from "@/app/actions/quote";
 import {
   HONEYPOT_FIELD,
-  STARTED_AT_FIELD,
+  TOKEN_FIELD,
   initialQuoteState,
   quoteLimits,
   serviceOptions,
   type QuoteField,
   type QuoteFormState,
 } from "@/lib/quote";
+import { siteConfig } from "@/lib/site-config";
 
 const inputClass =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink placeholder:text-muted/70 transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 aria-[invalid=true]:border-red-500 aria-[invalid=true]:focus:ring-red-100";
 
 export function QuoteForm() {
   const [state, formAction, pending] = useActionState(submitQuote, initialQuoteState);
-  // When the form became usable; sent with each submission for the server's timing check.
-  const startedAt = useRef(0);
+  // Signed by the server when the form loads; proves origin and fill time (see quote-security.ts).
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenFailed, setTokenFailed] = useState(false);
   const [dismissed, setDismissed] = useState<QuoteFormState | null>(null);
   const statusRef = useRef<HTMLDivElement>(null);
 
@@ -27,18 +29,22 @@ export function QuoteForm() {
   const errors = state.status === "error" ? state.errors : undefined;
   const values = state.status === "error" ? state.values : undefined;
 
-  useEffect(() => {
-    startedAt.current = Date.now();
+  const refreshToken = useCallback(() => {
+    getQuoteFormToken()
+      .then((t) => {
+        setToken(t);
+        setTokenFailed(false);
+      })
+      .catch(() => setTokenFailed(true));
   }, []);
+
+  useEffect(refreshToken, [refreshToken]);
 
   useEffect(() => {
     if (state.status !== "idle") statusRef.current?.focus();
-  }, [state]);
-
-  const submitWithTiming = (formData: FormData) => {
-    formData.set(STARTED_AT_FIELD, String(startedAt.current));
-    formAction(formData);
-  };
+    // An expired token is replaced so the next submit works without a reload.
+    if (state.status === "error" && state.code === "token") refreshToken();
+  }, [state, refreshToken]);
 
   if (showSuccess) {
     return (
@@ -53,14 +59,15 @@ export function QuoteForm() {
         </span>
         <h3 className="text-xl font-semibold text-ink">Thank you, {state.name}!</h3>
         <p className="max-w-sm text-sm leading-relaxed text-ink-soft">
-          Your quote request has been sent. We&apos;ve emailed you a confirmation and will be in
-          touch shortly.
+          {state.confirmationSent
+            ? "Your quote request has been sent. We've emailed you a confirmation and will be in touch shortly."
+            : "Your quote request has been sent and we'll be in touch shortly. We couldn't send a confirmation email, so there's no need to wait for one."}
         </p>
         <button
           type="button"
           onClick={() => {
             setDismissed(state);
-            startedAt.current = Date.now();
+            refreshToken();
           }}
           className="mt-2 text-sm font-medium text-brand-700 underline-offset-4 hover:underline"
         >
@@ -81,7 +88,7 @@ export function QuoteForm() {
 
   return (
     <form
-      action={submitWithTiming}
+      action={formAction}
       className="relative rounded-3xl bg-white p-6 shadow-card sm:p-8"
       aria-labelledby="quote-form-title"
     >
@@ -93,6 +100,21 @@ export function QuoteForm() {
         <span className="sr-only">with an asterisk</span> are required.
       </p>
 
+      {/* The form needs JavaScript (signed token, live validation); offer direct contact instead. */}
+      <noscript>
+        <p className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          This form needs JavaScript. To request a quote, email{" "}
+          <a href={siteConfig.contact.emailHref} className="font-medium underline">
+            {siteConfig.contact.email}
+          </a>{" "}
+          or call{" "}
+          <a href={siteConfig.contact.phoneHref} className="font-medium underline">
+            {siteConfig.contact.phoneDisplay}
+          </a>
+          .
+        </p>
+      </noscript>
+
       <div
         ref={statusRef}
         tabIndex={-1}
@@ -102,6 +124,12 @@ export function QuoteForm() {
         {state.status === "error" && (
           <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
             {state.message}
+          </p>
+        )}
+        {tokenFailed && (
+          <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+            The form couldn&apos;t load. Please check your connection and reload the page, or email us at{" "}
+            {siteConfig.contact.email}.
           </p>
         )}
       </div>
@@ -174,21 +202,23 @@ export function QuoteForm() {
         </Field>
       </div>
 
-      {/* Spam protection: honeypot (hidden from people). Fill time is added in submitWithTiming. */}
+      {/* Spam protection: honeypot (hidden from people) + server-signed token. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label htmlFor={`quote-${HONEYPOT_FIELD}`}>Leave this field empty</label>
         <input id={`quote-${HONEYPOT_FIELD}`} type="text" name={HONEYPOT_FIELD} tabIndex={-1} autoComplete="off" />
       </div>
+      <input type="hidden" name={TOKEN_FIELD} value={token ?? ""} />
 
       <button
         type="submit"
-        disabled={pending}
+        // Disabled until the token arrives, which also keeps it disabled without JavaScript.
+        disabled={pending || !token}
         className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-7 text-base font-medium text-white shadow-sm transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {pending ? (
+        {pending || (!token && !tokenFailed) ? (
           <>
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-            Sending…
+            {pending ? "Sending…" : "Loading…"}
           </>
         ) : (
           <>

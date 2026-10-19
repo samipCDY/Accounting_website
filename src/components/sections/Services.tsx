@@ -35,6 +35,8 @@ export function Services({ preview = false }: { preview?: boolean }) {
         <ul className={`grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6 ${preview ? "mt-14" : ""}`}>
           {services.map((service, i) => {
             const Icon = service.icon;
+            // Homepage: under the section's h2. Services page: directly under the page h1.
+            const CardHeading = preview ? "h3" : "h2";
             return (
               <Reveal as="li" key={service.title} delay={(i % 3) * 0.08}>
                 <article className="group h-full rounded-3xl bg-white p-7 shadow-card ring-1 ring-line transition-transform duration-300 motion-safe:hover:-translate-y-1">
@@ -43,7 +45,7 @@ export function Services({ preview = false }: { preview?: boolean }) {
                   >
                     <Icon className="size-6" aria-hidden="true" />
                   </span>
-                  <h3 className="mt-6 text-lg font-semibold text-ink">{service.title}</h3>
+                  <CardHeading className="mt-6 text-lg font-semibold text-ink">{service.title}</CardHeading>
                   <p className="mt-2 text-sm leading-relaxed text-ink-soft">{service.description}</p>
 
                   {!preview && (

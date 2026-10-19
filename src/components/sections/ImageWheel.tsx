@@ -90,6 +90,10 @@ export function ImageWheel() {
 
   useAnimationFrame((_, delta) => {
     if (drag.current.active || !inView) return;
+    if (paused) {
+      velocity.current = 0;
+      return;
+    }
 
     // Momentum from a flick, decaying until it drops to cruising speed.
     if (Math.abs(velocity.current) > SPEED) {
@@ -98,7 +102,7 @@ export function ImageWheel() {
       return;
     }
     velocity.current = 0;
-    if (!reduceMotion && !paused && !keyboardFocus.current) {
+    if (!reduceMotion && !keyboardFocus.current) {
       angle.set(angle.get() + direction.current * SPEED * delta);
     }
   });
@@ -153,7 +157,8 @@ export function ImageWheel() {
     // Holding still before letting go means no flick.
     if (e.timeStamp - drag.current.t > 80) velocity.current = 0;
     if (velocity.current !== 0) direction.current = Math.sign(velocity.current);
-    if (reduceMotion) velocity.current = 0;
+    // No momentum after letting go when paused or for reduced-motion users.
+    if (reduceMotion || paused) velocity.current = 0;
     setDragging(false);
     springElevationBack();
   };
@@ -248,7 +253,14 @@ export function ImageWheel() {
       {!reduceMotion && (
         <button
           type="button"
-          onClick={() => setPaused((p) => !p)}
+          onClick={() => {
+            if (!paused) {
+              // Stop everything immediately: flick momentum and any in-flight spring.
+              velocity.current = 0;
+              angle.stop();
+            }
+            setPaused((p) => !p);
+          }}
           aria-label={paused ? "Play animation" : "Pause animation"}
           className="absolute top-0 right-0 z-[101] grid size-10 place-items-center rounded-full bg-white/10 text-white ring-1 ring-white/20 transition-colors hover:bg-white/20"
         >
