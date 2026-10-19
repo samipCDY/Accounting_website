@@ -24,8 +24,7 @@ import {
  * Do not add statistics, awards, testimonials or credentials that cannot be verified.
  */
 export const siteConfig = {
-  name: "[Firm Name] & Associates",
-  shortName: "[FN]",
+  name: "Toka",
   tagline: "Chartered Accountants",
   description:
     "Audit, tax, accounting and compliance services for businesses in Nepal. Book a consultation with our Chartered Accountants.",

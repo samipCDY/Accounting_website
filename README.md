@@ -1,6 +1,10 @@
-# Accounting Website
+<p align="center">
+  <img src="public/logo.svg" alt="Toka logo" width="160">
+</p>
 
-Marketing website for a Chartered Accountancy firm in Nepal.
+<h1 align="center">Toka</h1>
+
+<p align="center">Website for Toka, a Chartered Accountancy firm in Nepal.</p>
 
 **Stack:** Next.js (App Router) · TypeScript · Tailwind CSS v4 · Motion · Resend · deployed on Netlify.
 No database: quote requests are emailed to the firm and are not stored.
@@ -60,7 +64,7 @@ src/
 
 ## Before launch
 
-All firm details in `src/lib/site-config.ts` marked with `[brackets]` are placeholders —
-name, logo, ICAN registration, PAN, address, phone, email and office hours.
+Firm details in `src/lib/site-config.ts` marked with `[brackets]` are still placeholders —
+ICAN registration, PAN, address, phone, email and office hours.
 Set `NEXT_PUBLIC_SITE_URL` in Netlify to the production domain so canonical URLs,
 the sitemap and Open Graph tags are correct.

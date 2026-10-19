@@ -1,22 +1,28 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 
-/** Placeholder wordmark — swap the badge for the firm's logo (next/image) when available. */
+/** Toka "T" mark. Same path as public/logo.svg; inlined so it inherits currentColor. */
+export function LogoMark({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="170 330 1025 575" aria-hidden="true" className={className}>
+      <path
+        fill="currentColor"
+        d="M178 370C300 360 400 352 490 348L1185 339C1050 362 880 390 750 406Q742 408 740 412L613 715L410 895Q470 780 540 625L625 418L605 418C560 422 520 431 479 438Z"
+      />
+    </svg>
+  );
+}
+
 export function Logo({ inverted = false }: { inverted?: boolean }) {
   return (
     <Link
       href="/"
-      className="inline-flex items-center gap-2.5 rounded-lg"
+      className="inline-flex items-center gap-3 rounded-lg"
       aria-label={`${siteConfig.name} — home`}
     >
-      <span
-        aria-hidden="true"
-        className="grid size-10 place-items-center rounded-xl bg-brand-600 text-sm font-bold text-white"
-      >
-        {siteConfig.shortName}
-      </span>
+      <LogoMark className={`h-8 w-auto ${inverted ? "text-white" : "text-ink"}`} />
       <span className="flex flex-col leading-tight">
-        <span className={`text-base font-semibold ${inverted ? "text-white" : "text-ink"}`}>
+        <span className={`text-lg font-semibold tracking-tight ${inverted ? "text-white" : "text-ink"}`}>
           {siteConfig.name}
         </span>
         <span className={`text-xs ${inverted ? "text-white/70" : "text-muted"}`}>
