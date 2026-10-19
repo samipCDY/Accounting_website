@@ -267,10 +267,6 @@ export function ImageWheel() {
           {paused ? <Play className="size-4" aria-hidden="true" /> : <Pause className="size-4" aria-hidden="true" />}
         </button>
       )}
-
-      <p className="mt-2 text-center text-xs text-white/50" aria-hidden="true">
-        Drag to spin · Tap a card to learn more
-      </p>
     </div>
   );
 }
