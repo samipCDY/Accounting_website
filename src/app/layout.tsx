@@ -18,12 +18,11 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
-    url: "/",
     siteName: siteConfig.name,
+    url: "/",
     title: `${siteConfig.name} | ${siteConfig.tagline} in Nepal`,
     description: siteConfig.description,
   },

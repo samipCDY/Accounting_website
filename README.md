@@ -80,15 +80,25 @@ and idempotency keys so double submits don't send duplicates.
 
 ## Project structure
 
+| Page          | Route          |
+| ------------- | -------------- |
+| Home          | `/`            |
+| About         | `/about`       |
+| Services      | `/services`    |
+| Industries    | `/industries`  |
+| Contact       | `/contact`     |
+| Get a Quote   | `/get-a-quote` |
+
 ```
 src/
-  app/                 layout, homepage, robots.ts, sitemap.ts, global styles/tokens
+  app/                 one folder per page, plus layout, robots.ts, sitemap.ts, global styles
+  app/actions/quote.ts Server Action for the quote form
   components/
     layout/            Navbar, Footer
-    sections/          Hero, Services, AboutPreview, Industries, ConsultationCTA
-    ui/                Button, Pill, SectionHeading, Logo, Reveal (scroll animation)
-  app/actions/quote.ts Server Action for the quote form
-  lib/site-config.ts   Firm details, navigation and homepage content
+    sections/          Hero, Services, AboutPreview, Industries, QuoteBanner, QuoteSection, QuoteForm
+    ui/                Button, Pill, SectionHeading, PageHeader, Logo, Reveal (scroll animation)
+  lib/site-config.ts   Firm details, navigation, services and industries content
+  lib/metadata.ts      Per-page SEO metadata helper
   lib/quote.ts         Quote form fields, limits and validation (shared client/server)
   lib/quote-emails.ts  Email templates (server-only)
 ```

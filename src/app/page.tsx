@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/sections/Hero";
 import { Services } from "@/components/sections/Services";
 import { AboutPreview } from "@/components/sections/AboutPreview";
 import { Industries } from "@/components/sections/Industries";
-import { ConsultationCTA } from "@/components/sections/ConsultationCTA";
+import { QuoteBanner } from "@/components/sections/QuoteBanner";
 import { services, siteConfig } from "@/lib/site-config";
+
+// Social tags come from the root layout (other pages override them via pageMetadata).
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -28,10 +34,10 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
       <Hero />
-      <Services />
-      <AboutPreview />
-      <Industries />
-      <ConsultationCTA />
+      <Services preview />
+      <AboutPreview preview />
+      <Industries preview />
+      <QuoteBanner />
     </>
   );
 }

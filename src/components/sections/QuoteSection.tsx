@@ -1,14 +1,14 @@
-import { Clock, Mail, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { QuoteForm } from "./QuoteForm";
 
-export function ConsultationCTA() {
+/** Contact details beside the quote form. Not wrapped in Reveal: the form must be visible before JS loads. */
+export function QuoteSection() {
   const { contact } = siteConfig;
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className="py-20 sm:py-24">
+    <section aria-labelledby="quote-section-title" className="py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Not wrapped in Reveal: the form must be visible even before JS loads. */}
         <div className="relative isolate overflow-hidden rounded-[2rem] bg-ink px-5 py-12 sm:px-12 sm:py-16 lg:px-16">
           <div aria-hidden="true" className="absolute -top-24 -right-24 -z-10 size-80 rounded-full bg-brand-600/30" />
           <div aria-hidden="true" className="absolute -bottom-32 left-1/4 -z-10 size-72 rounded-full bg-brand-500/15" />
@@ -16,19 +16,20 @@ export function ConsultationCTA() {
           <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
             <div className="lg:pt-4">
               <h2
-                id="contact-title"
+                id="quote-section-title"
                 className="text-3xl font-semibold tracking-tight text-balance text-white sm:text-4xl"
               >
-                Get a quote from a Chartered Accountant
+                Tell us what you need
               </h2>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-                Tell us about your business and what you need help with. We&apos;ll explain the
-                options, timelines and fees before any work begins.
+                Share a few details and we&apos;ll come back with the options, timelines and fees
+                before any work begins. Prefer to talk? Reach us directly.
               </p>
 
               <ul className="mt-10 grid gap-5 text-sm">
                 <ContactRow icon={Phone} label="Phone" value={contact.phoneDisplay} href={contact.phoneHref} />
                 <ContactRow icon={Mail} label="Email" value={contact.email} href={contact.emailHref} />
+                <ContactRow icon={MapPin} label="Office" value={contact.addressLines.join(", ")} />
                 <ContactRow icon={Clock} label="Office hours" value={contact.hours} />
               </ul>
             </div>
@@ -59,7 +60,7 @@ function ContactRow({
       </span>
       <span>
         <span className="block text-white/60">{label}</span>
-        <span className="mt-0.5 block font-medium break-all text-white">{value}</span>
+        <span className="mt-0.5 block font-medium break-words text-white">{value}</span>
       </span>
     </>
   );

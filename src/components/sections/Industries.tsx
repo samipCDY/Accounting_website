@@ -1,19 +1,27 @@
+import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { industries } from "@/lib/site-config";
 
-export function Industries() {
+/** `preview` (homepage) adds the section heading and a link to /industries. */
+export function Industries({ preview = false }: { preview?: boolean }) {
   return (
-    <section id="industries" aria-labelledby="industries-title" className="bg-canvas py-20 sm:py-24">
+    <section
+      aria-labelledby={preview ? "industries-title" : undefined}
+      aria-label={preview ? undefined : "Industries we serve"}
+      className={`py-20 sm:py-24 ${preview ? "bg-canvas" : ""}`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          id="industries-title"
-          eyebrow="Industries"
-          title="Sector-aware advice for Nepal's businesses"
-          description="Every industry has its own tax treatment, reporting rules and regulators. We tailor our work to the sector you operate in."
-        />
+        {preview && (
+          <SectionHeading
+            id="industries-title"
+            eyebrow="Industries"
+            title="Sector-aware advice for Nepal's businesses"
+            description="Every industry has its own tax treatment, reporting rules and regulators. We tailor our work to the sector you operate in."
+          />
+        )}
 
-        <ul className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-5">
+        <ul className={`grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-5 ${preview ? "mt-14" : ""}`}>
           {industries.map(({ name, icon: Icon }, i) => (
             <Reveal as="li" key={name} delay={(i % 4) * 0.06}>
               <div className="flex h-full flex-col items-start gap-4 rounded-2xl bg-white p-5 ring-1 ring-line transition-colors hover:ring-brand-200 sm:flex-row sm:items-center sm:p-6">
@@ -25,6 +33,14 @@ export function Industries() {
             </Reveal>
           ))}
         </ul>
+
+        {preview && (
+          <div className="mt-12 flex justify-center">
+            <ButtonLink href="/industries" variant="outline">
+              View all industries
+            </ButtonLink>
+          </div>
+        )}
       </div>
     </section>
   );

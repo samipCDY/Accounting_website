@@ -2,11 +2,12 @@ import { ArrowRight, Building2 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { approachPoints, siteConfig } from "@/lib/site-config";
+import { QUOTE_HREF, approachPoints, siteConfig } from "@/lib/site-config";
 
-export function AboutPreview() {
+/** `preview` (homepage) links to /about; on the About page it links to Get a Quote. */
+export function AboutPreview({ preview = false }: { preview?: boolean }) {
   return (
-    <section id="about" aria-labelledby="about-title" className="py-20 sm:py-24">
+    <section aria-labelledby="about-title" className="py-20 sm:py-24">
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20 lg:px-8">
         <Reveal className="relative order-last lg:order-first">
           {/* Placeholder for an office or team photo */}
@@ -28,7 +29,7 @@ export function AboutPreview() {
           <SectionHeading
             id="about-title"
             align="left"
-            eyebrow="About Us"
+            eyebrow={preview ? "About Us" : "Who We Are"}
             title="A Chartered Accountancy practice built around your business"
             description={`${siteConfig.name} is a firm of Chartered Accountants based in [City], Nepal. [Add a short, factual introduction — founding partners, focus areas and how you work with clients.]`}
           />
@@ -45,10 +46,17 @@ export function AboutPreview() {
           </ul>
 
           <div>
-            <ButtonLink href="/#contact" variant="outline">
-              Talk to our team
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </ButtonLink>
+            {preview ? (
+              <ButtonLink href="/about" variant="outline">
+                More about us
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </ButtonLink>
+            ) : (
+              <ButtonLink href={QUOTE_HREF}>
+                Get a Quote
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </ButtonLink>
+            )}
           </div>
         </div>
       </div>

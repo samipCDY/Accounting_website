@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
+import { QUOTE_HREF } from "@/lib/site-config";
 import { HeroVisual } from "./HeroVisual";
 
 export function Hero() {
@@ -30,11 +31,11 @@ export function Hero() {
           </p>
 
           <div className="flex w-full flex-col gap-3 pt-2 sm:w-auto sm:flex-row sm:gap-4">
-            <ButtonLink href="/#contact">
+            <ButtonLink href={QUOTE_HREF}>
               Get a Quote
               <ArrowRight className="size-4" aria-hidden="true" />
             </ButtonLink>
-            <ButtonLink href="/#services" variant="outline">
+            <ButtonLink href="/services" variant="outline">
               Explore Services
             </ButtonLink>
           </div>

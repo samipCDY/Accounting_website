@@ -20,12 +20,12 @@ export function Logo({ inverted = false }: { inverted?: boolean }) {
       className="inline-flex items-center gap-3 rounded-lg"
       aria-label={`${siteConfig.name} — home`}
     >
-      <LogoMark className={`h-8 w-auto ${inverted ? "text-white" : "text-ink"}`} />
+      <LogoMark className={`h-9 w-auto sm:h-10 ${inverted ? "text-white" : "text-ink"}`} />
       <span className="flex flex-col leading-tight">
-        <span className={`text-lg font-semibold tracking-tight ${inverted ? "text-white" : "text-ink"}`}>
+        <span className={`text-xl font-semibold tracking-tight sm:text-2xl ${inverted ? "text-white" : "text-ink"}`}>
           {siteConfig.name}
         </span>
-        <span className={`text-xs ${inverted ? "text-white/70" : "text-muted"}`}>
+        <span className={`text-xs sm:text-sm ${inverted ? "text-white/70" : "text-muted"}`}>
           {siteConfig.tagline}
         </span>
       </span>

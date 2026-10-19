@@ -49,15 +49,19 @@ export type NavItem = { label: string; href: string };
 
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/#about" },
-  { label: "Services", href: "/#services" },
-  { label: "Industries", href: "/#industries" },
-  { label: "Contact", href: "/#contact" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Industries", href: "/industries" },
+  { label: "Contact", href: "/contact" },
 ];
+
+export const QUOTE_HREF = "/get-a-quote";
 
 export type Service = {
   title: string;
   description: string;
+  /** Shown on the Services page. Confirm these match the firm's actual offerings. */
+  includes: string[];
   icon: LucideIcon;
   tone: Tone;
 };
@@ -69,6 +73,7 @@ export const services: Service[] = [
     title: "Audit & Assurance",
     description:
       "Statutory, internal and special-purpose audits carried out in line with Nepal Standards on Auditing.",
+    includes: ["Statutory audit", "Internal audit", "Tax audit", "Special-purpose & donor audits"],
     icon: ShieldCheck,
     tone: "blue",
   },
@@ -76,6 +81,7 @@ export const services: Service[] = [
     title: "Tax Advisory & Compliance",
     description:
       "Income tax, VAT and TDS planning and filing with the Inland Revenue Department, plus support during assessments.",
+    includes: ["Income tax returns", "VAT returns", "TDS filing", "Tax assessment support"],
     icon: Receipt,
     tone: "orange",
   },
@@ -83,6 +89,7 @@ export const services: Service[] = [
     title: "Accounting & Bookkeeping",
     description:
       "Monthly bookkeeping and financial statements prepared under NFRS, so your records are always audit-ready.",
+    includes: ["Monthly bookkeeping", "NFRS financial statements", "Management reports", "Accounting system setup"],
     icon: Calculator,
     tone: "brand",
   },
@@ -90,6 +97,7 @@ export const services: Service[] = [
     title: "Company Registration & Secretarial",
     description:
       "Company incorporation with the Office of Company Registrar, PAN/VAT registration and annual filings.",
+    includes: ["Company incorporation", "PAN / VAT registration", "Annual returns (OCR)", "Share & director changes"],
     icon: Building2,
     tone: "coral",
   },
@@ -97,6 +105,7 @@ export const services: Service[] = [
     title: "Payroll & SSF Compliance",
     description:
       "Payroll processing, salary TDS and Social Security Fund contributions handled accurately every month.",
+    includes: ["Monthly payroll", "Salary TDS", "SSF registration & contributions", "Payslips & reports"],
     icon: HandCoins,
     tone: "blue",
   },
@@ -104,6 +113,7 @@ export const services: Service[] = [
     title: "Business Advisory",
     description:
       "Budgeting, feasibility studies, internal controls and financial guidance for decisions that matter.",
+    includes: ["Budgeting & forecasting", "Feasibility studies", "Internal control reviews", "Business valuation"],
     icon: LineChart,
     tone: "orange",
   },

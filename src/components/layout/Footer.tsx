@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
-import { navItems, services, siteConfig } from "@/lib/site-config";
+import { QUOTE_HREF, navItems, services, siteConfig } from "@/lib/site-config";
 
 // Cached so the prerendered shell can include the year (cacheComponents disallows uncached `new Date()`).
 async function CurrentYear() {
@@ -32,7 +32,7 @@ export function Footer() {
         </div>
 
         <FooterColumn title="Quick links">
-          {navItems.map((item) => (
+          {[...navItems, { label: "Get a Quote", href: QUOTE_HREF }].map((item) => (
             <li key={item.href}>
               <Link href={item.href} className="text-white/75 transition-colors hover:text-white">
                 {item.label}
@@ -44,7 +44,7 @@ export function Footer() {
         <FooterColumn title="Services">
           {services.map((service) => (
             <li key={service.title}>
-              <Link href="/#services" className="text-white/75 transition-colors hover:text-white">
+              <Link href="/services" className="text-white/75 transition-colors hover:text-white">
                 {service.title}
               </Link>
             </li>
