@@ -1,7 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import Link from "next/link";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
+} from "react";
 import {
   animate,
   motion,
@@ -21,6 +30,9 @@ const SPEED = (Math.PI * 2) / 40_000;
 const MAX_VELOCITY = 0.006;
 /** Momentum kept per ms after a flick. */
 const FRICTION = 0.997;
+/** Pointer movement (px) before a press counts as a drag rather than a click on a tile. */
+const DRAG_THRESHOLD = 6;
+const TAU = Math.PI * 2;
 /** How open the ring is; dragging up/down changes it (1 = default). */
 const ELEVATION = { min: 0.3, max: 1.9, default: 1 };
 
@@ -36,7 +48,8 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 /**
  * Tiles orbiting a tilted ellipse: back tiles shrink, fade and blur; front tiles come forward.
  * Drag left/right (mouse, touch, pen) to spin with momentum; drag up/down (mouse) to tilt;
- * arrow keys do the same. Auto-rotation follows the last spin direction and stops when
+ * arrow keys do the same. Clicking/tapping a tile (without dragging) opens that industry
+ * on /industries; keyboard focus brings the tile to the front. Auto-rotation follows the last spin direction and stops when
  * paused, off-screen, or for reduced-motion users (who can still rotate it manually).
  *
  * Reads `industries` directly: icon components are functions and can't be passed from a Server Component.
@@ -57,7 +70,9 @@ export function ImageWheel() {
   const [dragging, setDragging] = useState(false);
 
   // Gesture state lives in refs so pointer moves don't re-render.
-  const drag = useRef({ active: false, x: 0, y: 0, t: 0 });
+  const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, x: 0, y: 0, t: 0 });
+  const suppressClick = useRef(false);
+  const keyboardFocus = useRef(false);
   const velocity = useRef(0);
   const direction = useRef(1);
 
@@ -83,25 +98,36 @@ export function ImageWheel() {
       return;
     }
     velocity.current = 0;
-    if (!reduceMotion && !paused) angle.set(angle.get() + direction.current * SPEED * delta);
+    if (!reduceMotion && !paused && !keyboardFocus.current) {
+      angle.set(angle.get() + direction.current * SPEED * delta);
+    }
   });
 
   const springElevationBack = () =>
     animate(elevation, ELEVATION.default, { type: "spring", stiffness: 90, damping: 18 });
 
+  // Pointer capture starts only once the pointer has moved past DRAG_THRESHOLD: capturing on
+  // press would retarget the click to the container, so tapping a tile could never open it.
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = { active: true, x: e.clientX, y: e.clientY, t: e.timeStamp };
+    const { clientX: x, clientY: y, timeStamp: t } = e;
+    drag.current = { active: true, moved: false, startX: x, startY: y, x, y, t };
+    suppressClick.current = false;
     velocity.current = 0;
     elevation.stop();
-    setDragging(true);
   };
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
     const el = containerRef.current;
     if (!d.active || !el) return;
+
+    if (!d.moved) {
+      if (Math.hypot(e.clientX - d.startX, e.clientY - d.startY) < DRAG_THRESHOLD) return;
+      d.moved = true;
+      e.currentTarget.setPointerCapture(e.pointerId);
+      setDragging(true);
+    }
 
     const dx = e.clientX - d.x;
     const dy = e.clientY - d.y;
@@ -115,18 +141,49 @@ export function ImageWheel() {
     // Up/down opens or flattens the ring (touch keeps vertical swipes for page scrolling).
     elevation.set(clamp(elevation.get() + (dy / el.clientHeight) * 1.6, ELEVATION.min, ELEVATION.max));
 
-    drag.current = { active: true, x: e.clientX, y: e.clientY, t: e.timeStamp };
+    drag.current = { ...d, x: e.clientX, y: e.clientY, t: e.timeStamp };
   };
 
   const endDrag = (e: PointerEvent<HTMLDivElement>) => {
     if (!drag.current.active) return;
+    drag.current.active = false;
+    // A press without movement is a click: let it reach the tile's link.
+    if (!drag.current.moved) return;
+    suppressClick.current = true;
     // Holding still before letting go means no flick.
     if (e.timeStamp - drag.current.t > 80) velocity.current = 0;
     if (velocity.current !== 0) direction.current = Math.sign(velocity.current);
     if (reduceMotion) velocity.current = 0;
-    drag.current.active = false;
     setDragging(false);
     springElevationBack();
+  };
+
+  // Ending a drag over a tile must not also open it.
+  const onClickCapture = (e: MouseEvent<HTMLDivElement>) => {
+    if (!suppressClick.current) return;
+    suppressClick.current = false;
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  // Rotate the shortest way so tile `index` sits at the front (bottom of the ring).
+  const bringToFront = (index: number) => {
+    const current = angle.get() + (index / items.length) * TAU;
+    let diff = (((Math.PI / 2 - current) % TAU) + TAU) % TAU;
+    if (diff > Math.PI) diff -= TAU;
+    velocity.current = 0;
+    animate(angle, angle.get() + diff, { type: "spring", stiffness: 140, damping: 22 });
+  };
+
+  const onTileFocus = (e: FocusEvent<HTMLAnchorElement>, index: number) => {
+    // Keyboard focus only: rotating under a mouse press would move the tile away from the pointer.
+    if (!e.currentTarget.matches(":focus-visible")) return;
+    keyboardFocus.current = true;
+    bringToFront(index);
+  };
+
+  const onTileBlur = () => {
+    keyboardFocus.current = false;
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -158,16 +215,17 @@ export function ImageWheel() {
       <div
         ref={containerRef}
         role="group"
-        aria-label="Industries we serve. Drag or use the arrow keys to rotate."
+        aria-label="Industries we serve. Select an industry to learn more, or drag or use the arrow keys to rotate."
         tabIndex={0}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
+        onClickCapture={onClickCapture}
         onKeyDown={onKeyDown}
         style={{ touchAction: "pan-y" }}
         className={`relative h-[22rem] rounded-3xl select-none sm:h-[26rem] lg:h-[30rem] ${
-          dragging ? "cursor-grabbing" : "cursor-grab"
+          dragging ? "cursor-grabbing [&_a]:cursor-grabbing" : "cursor-grab"
         }`}
       >
         <div role="list" className="absolute inset-0 rotate-[-8deg]">
@@ -180,6 +238,8 @@ export function ImageWheel() {
               angle={angle}
               rx={rx}
               ry={ryEffective}
+              onFocus={onTileFocus}
+              onBlur={onTileBlur}
             />
           ))}
         </div>
@@ -197,7 +257,7 @@ export function ImageWheel() {
       )}
 
       <p className="mt-2 text-center text-xs text-white/50" aria-hidden="true">
-        Drag to spin
+        Drag to spin · Tap a card to learn more
       </p>
     </div>
   );
@@ -210,6 +270,8 @@ function WheelTile({
   angle,
   rx,
   ry,
+  onFocus,
+  onBlur,
 }: {
   item: Industry;
   index: number;
@@ -217,6 +279,8 @@ function WheelTile({
   angle: MotionValue<number>;
   rx: MotionValue<number>;
   ry: MotionValue<number>;
+  onFocus: (e: FocusEvent<HTMLAnchorElement>, index: number) => void;
+  onBlur: () => void;
 }) {
   const offset = (index / count) * Math.PI * 2;
   const theta = useTransform(angle, (a) => a + offset);
@@ -236,8 +300,12 @@ function WheelTile({
       style={{ x, y, scale, opacity, filter, zIndex }}
       className="absolute top-1/2 left-1/2 h-36 w-32 -translate-x-1/2 -translate-y-1/2 sm:h-44 sm:w-40 lg:h-52 lg:w-48"
     >
-      <div
-        className={`relative size-full overflow-hidden rounded-[1.75rem] bg-gradient-to-br shadow-2xl shadow-black/40 ${toneGradients[item.tone]}`}
+      <Link
+        href={`/industries#${item.slug}`}
+        draggable={false}
+        onFocus={(e) => onFocus(e, index)}
+        onBlur={onBlur}
+        className={`relative block size-full cursor-pointer overflow-hidden rounded-[1.75rem] bg-gradient-to-br shadow-2xl shadow-black/40 transition-[filter] hover:brightness-110 focus-visible:outline-white ${toneGradients[item.tone]}`}
       >
         {item.image ? (
           <Image
@@ -258,7 +326,7 @@ function WheelTile({
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent p-4 pt-10">
           <span className="block text-sm leading-tight font-semibold text-white sm:text-base">{item.name}</span>
         </div>
-      </div>
+      </Link>
     </motion.div>
   );
 }

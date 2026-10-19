@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { HashHighlight } from "@/components/ui/HashHighlight";
 import { Reveal } from "@/components/ui/Reveal";
 import { industries } from "@/lib/site-config";
 import { ImageWheel } from "./ImageWheel";
@@ -10,11 +11,16 @@ export function Industries({ preview = false }: { preview?: boolean }) {
 
   return (
     <section aria-label="Industries we serve" className="py-20 sm:py-24">
+      <HashHighlight />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-5">
-          {industries.map(({ name, icon: Icon }, i) => (
+          {industries.map(({ name, slug, icon: Icon }, i) => (
             <Reveal as="li" key={name} delay={(i % 4) * 0.06}>
-              <div className="flex h-full flex-col items-start gap-4 rounded-2xl bg-white p-5 ring-1 ring-line transition-colors hover:ring-brand-200 sm:flex-row sm:items-center sm:p-6">
+              {/* id is the target of the homepage wheel links; HashHighlight marks the one you arrived at. */}
+              <div
+                id={slug}
+                className="flex h-full scroll-mt-32 flex-col items-start gap-4 rounded-2xl bg-white p-5 ring-1 ring-line transition-colors hover:ring-brand-200 data-[highlighted=true]:bg-brand-50 data-[highlighted=true]:ring-2 data-[highlighted=true]:ring-brand-500 sm:flex-row sm:items-center sm:p-6"
+              >
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon className="size-5" aria-hidden="true" />
                 </span>

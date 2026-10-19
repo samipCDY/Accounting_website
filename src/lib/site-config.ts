@@ -121,6 +121,8 @@ export const services: Service[] = [
 
 export type Industry = {
   name: string;
+  /** Anchor id on the Industries page; the homepage wheel links to /industries#<slug>. */
+  slug: string;
   icon: LucideIcon;
   tone: Tone;
   /** Optional photo for the homepage wheel, e.g. "/wheel/manufacturing.jpg" in /public. */
@@ -128,14 +130,14 @@ export type Industry = {
 };
 
 export const industries: Industry[] = [
-  { name: "Manufacturing", icon: Factory, tone: "blue" },
-  { name: "Trading & Retail", icon: Store, tone: "orange" },
-  { name: "Hospitality & Tourism", icon: Hotel, tone: "brand" },
-  { name: "IT & Software", icon: Cpu, tone: "coral" },
-  { name: "Healthcare", icon: HeartPulse, tone: "blue" },
-  { name: "Education", icon: GraduationCap, tone: "orange" },
-  { name: "NGOs & INGOs", icon: Users, tone: "brand" },
-  { name: "Cooperatives & Finance", icon: Landmark, tone: "coral" },
+  { name: "Manufacturing", slug: "manufacturing", icon: Factory, tone: "blue" },
+  { name: "Trading & Retail", slug: "trading-retail", icon: Store, tone: "orange" },
+  { name: "Hospitality & Tourism", slug: "hospitality-tourism", icon: Hotel, tone: "brand" },
+  { name: "IT & Software", slug: "it-software", icon: Cpu, tone: "coral" },
+  { name: "Healthcare", slug: "healthcare", icon: HeartPulse, tone: "blue" },
+  { name: "Education", slug: "education", icon: GraduationCap, tone: "orange" },
+  { name: "NGOs & INGOs", slug: "ngos-ingos", icon: Users, tone: "brand" },
+  { name: "Cooperatives & Finance", slug: "cooperatives-finance", icon: Landmark, tone: "coral" },
 ];
 
 // Describes how the firm works — edit to match your actual practice.
