@@ -11,10 +11,41 @@ No database: quote requests are emailed to the firm and are not stored.
 
 ## Getting started
 
+Requires [Node.js](https://nodejs.org) 20.9 or newer.
+
+**1. Install packages** (first time only, or after pulling new changes):
+
 ```bash
 npm install
-cp .env.example .env.local   # then fill in the values
-npm run dev                  # http://localhost:3000
+```
+
+**2. Run the site:**
+
+```bash
+npm run dev
+```
+
+Open **http://localhost:3000** in your browser. Press `Ctrl + C` in the terminal to stop.
+
+**3. (Optional) Enable the Get a Quote emails.** Create your env file:
+
+```bash
+# Windows (PowerShell / CMD)
+copy .env.example .env.local
+
+# macOS / Linux / Git Bash
+cp .env.example .env.local
+```
+
+Fill in `RESEND_API_KEY`, `QUOTE_TO_EMAIL` and `QUOTE_FROM_EMAIL` in `.env.local`, then restart
+`npm run dev`. The site works without these, but form submissions will show a "couldn't send" message.
+
+**Before deploying**, check everything builds:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
 ```
 
 ## Quote form (Server Action + Resend)
