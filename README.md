@@ -14,8 +14,8 @@ No database: quote requests are emailed to the firm and are not stored.
 - **Six pages:** Home, About, Services, Industries, Contact and Get a Quote.
 - **Interactive industries wheel** on the homepage: tiles orbit a tilted ring. Drag left/right to
   spin it with momentum, drag up/down to tilt it, or use the arrow keys. Click or tap a tile to open
-  that industry on the Industries page (scrolled to and highlighted). A pause button stops all
-  motion; it stays still for visitors who prefer reduced motion.
+  that industry on the Industries page (scrolled to and highlighted). It stays still for visitors
+  who prefer reduced motion.
 - **Get a Quote form** (Server Action + Resend): emails each request to the firm and sends the
   customer a confirmation, with validation and spam protection (see below).
 - **Responsive** from 320px phones to wide desktops; light theme only.

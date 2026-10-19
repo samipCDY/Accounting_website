@@ -21,7 +21,6 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { Pause, Play } from "lucide-react";
 import { industries, type Industry, type Tone } from "@/lib/site-config";
 
 /** Auto-rotation: one full turn every 40s (radians per ms). */
@@ -49,8 +48,8 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
  * Tiles orbiting a tilted ellipse: back tiles shrink, fade and blur; front tiles come forward.
  * Drag left/right (mouse, touch, pen) to spin with momentum; drag up/down (mouse) to tilt;
  * arrow keys do the same. Clicking/tapping a tile (without dragging) opens that industry
- * on /industries; keyboard focus brings the tile to the front. Auto-rotation follows the last spin direction and stops when
- * paused, off-screen, or for reduced-motion users (who can still rotate it manually).
+ * on /industries; keyboard focus brings the tile to the front. Auto-rotation follows the last
+ * spin direction and stops when off-screen or for reduced-motion users (who can still rotate it manually).
  *
  * Reads `industries` directly: icon components are functions and can't be passed from a Server Component.
  */
@@ -66,7 +65,6 @@ export function ImageWheel() {
 
   const reduceMotion = useReducedMotion();
   const inView = useInView(containerRef, { margin: "100px" });
-  const [paused, setPaused] = useState(false);
   const [dragging, setDragging] = useState(false);
 
   // Gesture state lives in refs so pointer moves don't re-render.
@@ -90,10 +88,6 @@ export function ImageWheel() {
 
   useAnimationFrame((_, delta) => {
     if (drag.current.active || !inView) return;
-    if (paused) {
-      velocity.current = 0;
-      return;
-    }
 
     // Momentum from a flick, decaying until it drops to cruising speed.
     if (Math.abs(velocity.current) > SPEED) {
@@ -157,8 +151,8 @@ export function ImageWheel() {
     // Holding still before letting go means no flick.
     if (e.timeStamp - drag.current.t > 80) velocity.current = 0;
     if (velocity.current !== 0) direction.current = Math.sign(velocity.current);
-    // No momentum after letting go when paused or for reduced-motion users.
-    if (reduceMotion || paused) velocity.current = 0;
+    // No momentum after letting go for reduced-motion users.
+    if (reduceMotion) velocity.current = 0;
     setDragging(false);
     springElevationBack();
   };
@@ -249,24 +243,6 @@ export function ImageWheel() {
           ))}
         </div>
       </div>
-
-      {!reduceMotion && (
-        <button
-          type="button"
-          onClick={() => {
-            if (!paused) {
-              // Stop everything immediately: flick momentum and any in-flight spring.
-              velocity.current = 0;
-              angle.stop();
-            }
-            setPaused((p) => !p);
-          }}
-          aria-label={paused ? "Play animation" : "Pause animation"}
-          className="absolute top-0 right-0 z-[101] grid size-10 place-items-center rounded-full bg-white/10 text-white ring-1 ring-white/20 transition-colors hover:bg-white/20"
-        >
-          {paused ? <Play className="size-4" aria-hidden="true" /> : <Pause className="size-4" aria-hidden="true" />}
-        </button>
-      )}
     </div>
   );
 }
